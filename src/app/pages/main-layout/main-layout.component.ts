@@ -1,17 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 
-import { StationsService } from '../../services/stations.service';
+import { MediaService } from '../../services/media.service';
 
 @Component({
   selector: 'main-layout',
-  templateUrl: 'main-layout.component.html'
+  templateUrl: 'main-layout.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class MainLayoutComponent implements OnInit {
-  constructor(public stations: StationsService) { }
+  constructor(public media: MediaService) { }
 
   ngOnInit() {
-    this.stations.fetchFromLocalStorage();
-    this.stations.fetchStations();
+    this.media.fetchFromLocalStorage();
+    this.media.fetchChannels();
   }
 }
