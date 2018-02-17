@@ -1,0 +1,14 @@
+<div class="channels">
+  <div class="channel"
+    (click)="selectChannel(channel)"
+    *ngFor="let channel of channels">{{ channel.name }}</div>
+</div>
+<div class="details">
+  <div class="search-panel">
+    <input type="text">
+  </div>
+  <div class="videos">
+    <div class="video"
+      *ngFor="let video of videos">{{ video.name }}</div>
+  </div>
+</div>
