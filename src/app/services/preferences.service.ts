@@ -6,8 +6,6 @@ import { Video } from '../models/video.model';
 @Injectable()
 export class PreferencesService {
 
-  constructor(private media: MediaService) { }
-
   public getLastPlayedVideoId(): string {
     try {
       if (window && window.localStorage) {

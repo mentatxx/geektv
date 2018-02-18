@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { AutoUnsubscribe } from 'rx-angular-autounsubscribe';
 import { Channel } from '../../models/channel.model';
 import { MediaService } from '../../services/media.service';
+import { PreferencesService } from '../../services/preferences.service';
 import { Video } from '../../models/video.model';
 
 @Component({
@@ -16,12 +17,14 @@ export class ChannelsComponent implements OnInit {
 
   public channels: Channel[] = [];
   public videos: Video[] = [];
+  public selectedChannel: Channel = null;
 
   @AutoUnsubscribe() protected updateSubscription;
   @AutoUnsubscribe() protected channelSubscription;
 
   constructor(
     private media: MediaService,
+    private preferences: PreferencesService,
     private cd: ChangeDetectorRef
   ) { }
 
@@ -35,8 +38,13 @@ export class ChannelsComponent implements OnInit {
     this.channelSubscription = this.media
       .onChannelSelected
       .subscribe((channel: Channel) => {
+        this.selectedChannel = channel;
         this.videos = channel.videos;
         this.cd.markForCheck();
       });
+  }
+
+  public selectChannel(channel: Channel) {
+    this.media.selectChannel(channel);
   }
 }

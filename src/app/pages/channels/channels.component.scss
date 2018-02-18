@@ -1,4 +1,55 @@
 :host {
   display: flex;
   flex-direction: row;
+  align-items: stretch;
+}
+
+.details {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.channels {
+  flex: 0 0 auto;
+  padding: 16px;
+  padding-top: 40px;
+}
+
+.channel {
+  padding: 16px;
+  font-size: 32px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  user-select: none;
+
+  &:hover {
+    background: #eee;
+  }
+}
+
+.search-panel {
+  height: 40px;
+  border-bottom: 1px solid #eee;
+}
+
+.videos {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.video {
+  display: block;
+  width: 300px;
+  overflow: hidden;
+
+  padding: 16px;
+  font-size: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  user-select: none;
+
+  &:hover {
+    background: #eee;
+  }
 }
