@@ -10,7 +10,7 @@
   <div class="videos">
     <div class="video"
       [attr.title]="video.name"
-      [routerLink]="['/video', selectedChannel.name, video.url]"
+      [routerLink]="['/video', selectedChannel.name, video.idx, video.url]"
       *ngFor="let video of videos">{{ video.name }}</div>
   </div>
 </div>

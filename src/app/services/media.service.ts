@@ -60,8 +60,8 @@ export class MediaService {
     return this.channels.find((c) => c.name === channelId);
   }
 
-  public getVideo(channel: Channel, videoId: string): Video {
-    return channel.videos.find((v) => v.url === videoId);
+  public getVideo(channel: Channel, index: number, videoId: string): Video {
+    return channel.videos.find((v) => v.url === videoId && v.idx === index);
   }
 
   public getNextVideo(channel: Channel, video: Video): Video {
@@ -90,13 +90,19 @@ export class MediaService {
     this.preferences.setLastPlayedVideo(video);
   }
 
+  public getFullUrl(channel: Channel, video: Video) {
+    if (channel && video) {
+      return channel.urls[video.idx] + '/' + video.url;
+    }
+  }
+
   private fetchVideosForChannel(channel: Channel): Promise<Video[]> {
-    const promises = channel.urls.map((url) => this.fetchVideosFromUrl(url));
+    const promises = channel.urls.map((url, index) => this.fetchVideosFromUrl(url, index));
     return Promise.all(promises)
       .then((results) => results.reduce((prev, curr) => prev.concat(...curr), []));
   }
 
-  private fetchVideosFromUrl(url: string): Promise<Video[]> {
+  private fetchVideosFromUrl(url: string, streamIndex: number): Promise<Video[]> {
     return this.httpClient
       .get(url)
       .toPromise()
@@ -104,7 +110,7 @@ export class MediaService {
         items
           // TODO: include sub-directories
           .filter((item) => item.type === 'file')
-          .map(({ name, size }) => new Video(name, size, name)),
+          .map(({ name, size }) => new Video(name, size, name, streamIndex)),
         (error) => {
           console.error(error);
           return [];

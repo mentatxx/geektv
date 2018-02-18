@@ -1,5 +1,4 @@
-<video *ngIf="url"
-  id="video_player"
+<video id="video_player"
   class="video-js vjs-default-skin vjs-big-play-centered vjs-16-9"
   controls
   preload="auto"
@@ -7,6 +6,7 @@
   height="264">
 
   <source [src]="url"
-    type="video/mp4" />
+    type="video/mp4"
+    *ngIf="url" />
 
 </video>

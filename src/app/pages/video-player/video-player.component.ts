@@ -1,6 +1,6 @@
 import * as videojs from 'video.js';
 
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 
 import { ActivatedRoute } from '@angular/router';
 import { Channel } from '../../models/channel.model';
@@ -9,10 +9,11 @@ import { Video } from '../../models/video.model';
 
 @Component({
   selector: 'video-player',
-  templateUrl: 'video-player.component.html'
+  templateUrl: 'video-player.component.html',
+  styleUrls: ['video-player.component.scss']
 })
 
-export class VideoPlayerComponent implements OnInit, AfterViewInit {
+export class VideoPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public url: string;
 
@@ -28,14 +29,23 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit {
   public ngOnInit(): void {
     this.activatedRoute
       .params
-      .subscribe(({ channel, video }) => {
+      .subscribe(({ channel, video, index }) => {
+        const indexNum = +index;
         this.channel = this.media.getChannel(channel);
         if (this.channel) {
-          this.video = this.media.getVideo(this.channel, video);
+          this.video = this.media.getVideo(this.channel, indexNum, video);
+          this.startPlayback();
         } else {
           this.video = null;
         }
       });
+  }
+
+  public ngOnDestroy(): void {
+    if (this.player) {
+      this.player.dispose();
+      this.player = null;
+    }
   }
 
   public ngAfterViewInit() {
@@ -44,10 +54,11 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit {
 
     // setup the player via the unique element ID
     const element = document.getElementById(el);
-    const player = this.player = videojs(element, {
+    const player = this.player = videojs(el, {
       autoplay: true
     });
     player.on('ended', () => this.playNextVideo());
+    this.startPlayback();
 
     // Make up an aspect ratio
     // const aspectRatio = 264 / 640;
@@ -68,4 +79,12 @@ export class VideoPlayerComponent implements OnInit, AfterViewInit {
   private playNextVideo() {
     // TODO:
   }
+
+  private startPlayback() {
+    if (this.video && this.player) {
+      const url = this.media.getFullUrl(this.channel, this.video);
+      this.player.src(url);
+    }
+  }
+
 }

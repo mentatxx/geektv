@@ -17,7 +17,7 @@ export const routes: Route[] = [
         redirectTo: 'channels',
       },
       {
-        path: 'video/:channel/:video',
+        path: 'video/:channel/:index/:video',
         component: VideoPlayerComponent
       },
       {
