@@ -14,6 +14,7 @@ export class MediaService {
   public selectedVideo: Video = null;
   public onChannelSelected = new Subject<Channel>();
   public onVideoSelected = new Subject<Video>();
+  public onMediaUpdated = new Subject<void>();
 
   constructor(
     public httpClient: HttpClient,
@@ -44,9 +45,10 @@ export class MediaService {
           this.channels = this.rawChannelsToModels(channelsJson);
           this.channels.forEach((channel) => {
             this.fetchVideosForChannel(channel)
-              .then((videos: Video[]) => channel.videos = videos);
+              .then((videos: Video[]) => channel.videos = videos)
+              .then(() => this.saveToLocalStorage())
+              .then(() => this.onMediaUpdated.next());
           });
-          this.saveToLocalStorage();
         } else {
           this.channels = [];
           console.error('Invalid structure of stations.json');
