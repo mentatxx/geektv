@@ -2,6 +2,7 @@ import { Channel } from '../models/channel.model';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PreferencesService } from './preferences.service';
+import { Router } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import { Video } from '../models/video.model';
 
@@ -19,6 +20,7 @@ export class MediaService {
   constructor(
     public httpClient: HttpClient,
     public preferences: PreferencesService,
+    private router: Router,
   ) { }
 
   public fetchFromLocalStorage() {
@@ -94,6 +96,10 @@ export class MediaService {
     if (channel && video) {
       return channel.urls[video.idx] + '/' + video.url;
     }
+  }
+
+  public navigateTo(channel: Channel, video: Video) {
+    this.router.navigate(['/video', channel.name, video.idx, video.url]);
   }
 
   private fetchVideosForChannel(channel: Channel): Promise<Video[]> {

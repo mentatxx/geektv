@@ -79,7 +79,10 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private playNextVideo() {
-    // TODO:
+    const nextVideo = this.media.getNextVideo(this.channel, this.video);
+    if (nextVideo) {
+      this.media.navigateTo(this.channel, nextVideo);
+    }
   }
 
   private startPlayback() {
