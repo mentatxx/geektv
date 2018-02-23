@@ -1,8 +1,9 @@
 import * as videojs from 'video.js';
 
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 
-import { ActivatedRoute } from '@angular/router';
+import { AutoUnsubscribe } from 'rx-angular-autounsubscribe';
 import { Channel } from '../../models/channel.model';
 import { MediaService } from '../../services/media.service';
 import { PreferencesService } from '../../services/preferences.service';
@@ -11,35 +12,45 @@ import { Video } from '../../models/video.model';
 @Component({
   selector: 'video-player',
   templateUrl: 'video-player.component.html',
-  styleUrls: ['video-player.component.scss']
+  styleUrls: ['video-player.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
 export class VideoPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public url: string;
+  public channel: Channel;
+  public video: Video;
+
+  @AutoUnsubscribe() protected routeSubscription;
+  @AutoUnsubscribe() protected mediaSubscription;
 
   private player;
-  private channel: Channel;
-  private video: Video;
+  private params: any = {};
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private preferences: PreferencesService,
     private media: MediaService,
+    private router: Router,
+    private cd: ChangeDetectorRef,
   ) { }
 
   public ngOnInit(): void {
-    this.activatedRoute
+    this.routeSubscription = this.activatedRoute
       .params
       .subscribe(({ channel, video, index }) => {
-        const indexNum = +index;
-        this.channel = this.media.getChannel(channel);
-        if (this.channel) {
-          this.video = this.media.getVideo(this.channel, indexNum, video);
+        this.params = { channel, video, index };
+        this.fetchVideoUrl();
+        this.cd.markForCheck();
+      });
+    this.mediaSubscription = this.media.onMediaUpdated
+      .subscribe(() => {
+        if (this.params) {
+          this.fetchVideoUrl();
           this.startPlayback();
-        } else {
-          this.video = null;
         }
+        this.cd.markForCheck();
       });
   }
 
@@ -61,21 +72,10 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     player.on('ended', () => this.playNextVideo());
     this.startPlayback();
+  }
 
-    // Make up an aspect ratio
-    // const aspectRatio = 264 / 640;
-
-    // internal method to handle a window resize event to adjust the video player
-    // const resizeVideoJS = () => {
-    //   const width = document.getElementById(id).parentElement.offsetWidth;
-    //   myPlayer.width(width).height(width * aspectRatio);
-    // };
-
-    // Initialize resizeVideoJS()
-    // resizeVideoJS();
-
-    // Then on resize call resizeVideoJS()
-    // window.onresize = resizeVideoJS;
+  public goToChannels() {
+    this.router.navigate(['/channels']);
   }
 
   private playNextVideo() {
@@ -90,6 +90,18 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.video && this.player) {
       const url = this.media.getFullUrl(this.channel, this.video);
       this.player.src(url);
+    }
+  }
+
+  private fetchVideoUrl() {
+    const { channel, video, index } = this.params;
+    const indexNum = +index;
+    this.channel = this.media.getChannel(channel);
+    if (this.channel) {
+      this.video = this.media.getVideo(this.channel, indexNum, video);
+      this.startPlayback();
+    } else {
+      this.video = null;
     }
   }
 

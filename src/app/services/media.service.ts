@@ -110,7 +110,7 @@ export class MediaService {
         items
           // TODO: include sub-directories
           .filter((item) => item.type === 'file')
-          .map(({ name, size }) => new Video(name, size, name, streamIndex)),
+          .map(({ name, size }) => new Video(name, size, this.escapeName(name), streamIndex)),
         (error) => {
           console.error(error);
           return [];
@@ -129,5 +129,12 @@ export class MediaService {
         // nothing 2 do
       }
     }
+  }
+
+  private escapeName(name) {
+    return encodeURIComponent(name).replace(/[!'()*]/g, (c) => {
+      // Also encode !, ', (, ), and *
+      return '%' + c.charCodeAt(0).toString(16);
+    });
   }
 }

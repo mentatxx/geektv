@@ -1,3 +1,8 @@
+<div class="overlay">
+  <button (click)="goToChannels()">&lt; Channels</button>
+  <div class="overlay__channel">{{ channel?.name }}</div>
+  <div class="overlay__video">{{ video?.name }}</div>
+</div>
 <video id="video_player"
   class="video-js vjs-default-skin vjs-big-play-centered vjs-16-9"
   controls

@@ -1,7 +1,9 @@
+import { CommonModule, HashLocationStrategy, LocationStrategy } from '@angular/common';
+
 import { AppComponent } from './app.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { ChannelsComponent } from './pages/channels/channels.component';
-import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MainLayoutComponent } from './pages/main-layout/main-layout.component';
 import { MediaService } from './services/media.service';
@@ -9,7 +11,6 @@ import { NgModule } from '@angular/core';
 import { PreferencesService } from './services/preferences.service';
 import { VideoPlayerComponent } from './pages/video-player/video-player.component';
 import { routing } from './app.routes';
-import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { FormsModule } from '@angular/forms';
   providers: [
     MediaService,
     PreferencesService,
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
   ],
   bootstrap: [AppComponent]
 })
