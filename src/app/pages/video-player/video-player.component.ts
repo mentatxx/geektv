@@ -5,6 +5,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Channel } from '../../models/channel.model';
 import { MediaService } from '../../services/media.service';
+import { PreferencesService } from '../../services/preferences.service';
 import { Video } from '../../models/video.model';
 
 @Component({
@@ -23,6 +24,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
+    private preferences: PreferencesService,
     private media: MediaService,
   ) { }
 
@@ -81,6 +83,10 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private startPlayback() {
+    if (this.channel && this.video) {
+      this.preferences.setLastPlayedChannel(this.channel);
+      this.preferences.setLastPlayedVideo(this.video);
+    }
     if (this.video && this.player) {
       const url = this.media.getFullUrl(this.channel, this.video);
       this.player.src(url);

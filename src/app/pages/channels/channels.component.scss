@@ -25,11 +25,22 @@
   &:hover {
     background: #eee;
   }
+
+  &--selected {
+    color: #6495ed;
+    border-left: 1px solid #6495ed;
+  }
 }
 
 .search-panel {
-  height: 40px;
   border-bottom: 1px solid #eee;
+  padding: 8px;
+
+  input {
+    width: 200px;
+    font-size: 16px;
+    padding: 4px;
+  }
 }
 
 .videos {
@@ -48,6 +59,11 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   user-select: none;
+
+  &--selected {
+    color: #6495ed;
+    border-left: 1px solid #6495ed;
+  }
 
   &:hover {
     background: #eee;

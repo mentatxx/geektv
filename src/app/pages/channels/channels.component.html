@@ -1,14 +1,19 @@
 <div class="channels">
   <div class="channel"
+    [class.channel--selected]="channel === selectedChannel"
     (click)="selectChannel(channel)"
     *ngFor="let channel of channels">{{ channel.name }}</div>
 </div>
 <div class="details">
   <div class="search-panel">
-    <input type="text">
+    <input type="text"
+      placeholder="Filter"
+      [ngModel]="searchText"
+      (ngModelChange)="searchTextChange($event)">
   </div>
   <div class="videos">
     <div class="video"
+      [class.video--selected]="video === selectedVideo"
       [attr.title]="video.name"
       [routerLink]="['/video', selectedChannel.name, video.idx, video.url]"
       *ngFor="let video of videos">{{ video.name }}</div>

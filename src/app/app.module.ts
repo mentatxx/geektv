@@ -9,6 +9,7 @@ import { NgModule } from '@angular/core';
 import { PreferencesService } from './services/preferences.service';
 import { VideoPlayerComponent } from './pages/video-player/video-player.component';
 import { routing } from './app.routes';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { routing } from './app.routes';
     VideoPlayerComponent,
   ],
   imports: [
+    FormsModule,
     BrowserModule,
     CommonModule,
     HttpClientModule,
