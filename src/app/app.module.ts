@@ -10,7 +10,9 @@ import { MainLayoutComponent } from './pages/main-layout/main-layout.component';
 import { MediaService } from './services/media.service';
 import { NgModule } from '@angular/core';
 import { PreferencesService } from './services/preferences.service';
+import { ServiceWorkerModule } from '@angular/service-worker';
 import { VideoPlayerComponent } from './pages/video-player/video-player.component';
+import { environment } from '../environments/environment';
 import { routing } from './app.routes';
 
 @NgModule({
@@ -25,6 +27,9 @@ import { routing } from './app.routes';
     BrowserModule,
     CommonModule,
     HttpClientModule,
+    ServiceWorkerModule.register('/ngsw-worker.js', {
+      enabled: environment.production
+    }),
     routing
   ],
   providers: [

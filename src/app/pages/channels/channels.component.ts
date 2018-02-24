@@ -92,9 +92,11 @@ export class ChannelsComponent implements OnInit {
     const lastPlayedChannel = this.channels.find((c) => c.name === lastPlayedChannelName);
     if (lastPlayedChannel) {
       this.selectChannel(lastPlayedChannel);
+      const lastPlayedVideoName = this.preferences.getLastPlayedVideoId();
+      if (lastPlayedVideoName) {
+        this.selectedVideo = lastPlayedChannel.videos.find((v) => v.url === lastPlayedVideoName);
+        this.cd.markForCheck();
+      }
     }
-    const lastPlayedVideoName = this.preferences.getLastPlayedVideoId();
-    this.selectedVideo = lastPlayedChannel.videos.find((v) => v.url === lastPlayedVideoName);
-    this.cd.markForCheck();
   }
 }

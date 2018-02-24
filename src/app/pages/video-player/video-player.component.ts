@@ -75,6 +75,9 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
     const player = this.player = videojs(el, {
       // player options
     });
+    player.on('volumechange', () => {
+      this.preferences.setVolume(player.volume());
+    });
     player.on('ended', () => {
       this.media.removePositionLru(this.video);
       this.playNextVideo();
@@ -103,6 +106,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
       const position = this.media.getPositionLru(this.video);
       this.player.ready(() => {
         this.player.src(url);
+        this.player.volume(this.preferences.getVolume());
         this.player.currentTime(position);
         this.player.play();
         this.player.requestFullscreen();

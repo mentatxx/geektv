@@ -51,4 +51,28 @@ export class PreferencesService {
       console.error(error);
     }
   }
+
+  public getVolume(): number {
+    try {
+      if (window && window.localStorage) {
+        const storedVolume = window.localStorage.getItem('volume');
+        return storedVolume ? +storedVolume : 1.0;
+      } else {
+        return 1.0;
+      }
+    } catch (error) {
+      console.error(error);
+      return 1.0;
+    }
+  }
+
+  public setVolume(volume: number) {
+    try {
+      if (window && window.localStorage) {
+        window.localStorage.setItem('volume', '' + volume);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }
