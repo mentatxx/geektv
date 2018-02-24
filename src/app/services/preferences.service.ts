@@ -51,5 +51,4 @@ export class PreferencesService {
       console.error(error);
     }
   }
-
 }

@@ -5,6 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { ChannelsComponent } from './pages/channels/channels.component';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { LruService } from './services/lru.factory';
 import { MainLayoutComponent } from './pages/main-layout/main-layout.component';
 import { MediaService } from './services/media.service';
 import { NgModule } from '@angular/core';
@@ -29,6 +30,7 @@ import { routing } from './app.routes';
   providers: [
     MediaService,
     PreferencesService,
+    LruService,
     { provide: LocationStrategy, useClass: HashLocationStrategy },
   ],
   bootstrap: [AppComponent]

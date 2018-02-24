@@ -27,6 +27,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private player;
   private params: any = {};
+  private intervalHandler;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -52,6 +53,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         this.cd.markForCheck();
       });
+    this.intervalHandler = setInterval(() => this.markPoistionLru(), 1000);
   }
 
   public ngOnDestroy(): void {
@@ -59,6 +61,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
       this.player.dispose();
       this.player = null;
     }
+    clearInterval(this.intervalHandler);
   }
 
   public ngAfterViewInit() {
@@ -68,9 +71,12 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
     // setup the player via the unique element ID
     const element = document.getElementById(el);
     const player = this.player = videojs(el, {
-      autoplay: true
+      // player options
     });
-    player.on('ended', () => this.playNextVideo());
+    player.on('ended', () => {
+      this.media.removePositionLru(this.video);
+      this.playNextVideo();
+    });
     this.startPlayback();
   }
 
@@ -92,7 +98,13 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if (this.video && this.player) {
       const url = this.media.getFullUrl(this.channel, this.video);
-      this.player.src(url);
+      const position = this.media.getPositionLru(this.video);
+      this.player.ready(() => {
+        this.player.src(url);
+        this.player.currentTime(position);
+        this.player.play();
+        this.player.requestFullscreen();
+      });
     }
   }
 
@@ -108,4 +120,9 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  private markPoistionLru() {
+    if (this.video && this.player && !this.player.paused()) {
+      this.media.addPositionLru(this.video, this.player.currentTime());
+    }
+  }
 }

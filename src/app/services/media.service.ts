@@ -1,6 +1,8 @@
 import { Channel } from '../models/channel.model';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { LruList } from './lru-list';
+import { LruService } from './lru.factory';
 import { PreferencesService } from './preferences.service';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
@@ -16,12 +18,16 @@ export class MediaService {
   public onChannelSelected = new Subject<Channel>();
   public onVideoSelected = new Subject<Video>();
   public onMediaUpdated = new Subject<void>();
+  public positionLru: LruList = null;
 
   constructor(
     public httpClient: HttpClient,
     public preferences: PreferencesService,
     private router: Router,
-  ) { }
+    private lruFactory: LruService,
+  ) {
+    this.positionLru = lruFactory.factory('position');
+  }
 
   public fetchFromLocalStorage() {
     if (window && window.localStorage) {
@@ -100,6 +106,27 @@ export class MediaService {
 
   public navigateTo(channel: Channel, video: Video) {
     this.router.navigate(['/video', channel.name, video.idx, video.url]);
+  }
+
+  public addPositionLru(video: Video, position: number) {
+    if (!video) {
+      return;
+    }
+    this.positionLru.addToLruList(video.name, position);
+  }
+
+  public removePositionLru(video: Video) {
+    if (!video) {
+      return;
+    }
+    this.positionLru.removeFromLruList(video.name);
+  }
+
+  public getPositionLru(video: Video): number {
+    if (!video) {
+      return 0;
+    }
+    return this.positionLru.getFromLruList(video.name) || 0;
   }
 
   private fetchVideosForChannel(channel: Channel): Promise<Video[]> {
