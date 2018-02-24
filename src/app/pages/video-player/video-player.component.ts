@@ -9,6 +9,8 @@ import { MediaService } from '../../services/media.service';
 import { PreferencesService } from '../../services/preferences.service';
 import { Video } from '../../models/video.model';
 
+const POSITION_SAVE_INTERVAL = 1000;
+
 @Component({
   selector: 'video-player',
   templateUrl: 'video-player.component.html',
@@ -53,7 +55,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         this.cd.markForCheck();
       });
-    this.intervalHandler = setInterval(() => this.markPoistionLru(), 1000);
+    this.intervalHandler = setInterval(() => this.markPoistionLru(), POSITION_SAVE_INTERVAL);
   }
 
   public ngOnDestroy(): void {
